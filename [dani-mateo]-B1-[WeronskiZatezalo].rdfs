@@ -1,0 +1,167 @@
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:    <http://example.org/ontology/> .
+
+# --- Namespace Declaration ---
+# ex: is the prefix for our specific ontology terms.
+
+# --- Class Definitions ---
+# These are the main concepts or entities in our domain.
+
+ex:Person a rdfs:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "Represents an individual, who can be an author or a reviewer." .
+
+ex:Paper a rdfs:Class ;
+    rdfs:label "Paper" ;
+    rdfs:comment "A research paper written by one or more authors." .
+
+ex:Topic a rdfs:Class ;
+    rdfs:label "Topic" ;
+    rdfs:comment "A keyword or a field of study related to a paper." .
+
+ex:Publication a rdfs:Class ;
+    rdfs:label "Publication" ;
+    rdfs:comment "A superclass for any medium where papers are published, like a journal volume or conference proceedings." .
+
+ex:Volume a rdfs:Class ;
+    rdfs:subClassOf ex:Publication ;
+    rdfs:label "Volume" ;
+    rdfs:comment "A volume of a Journal." .
+
+ex:Edition a rdfs:Class ;
+    rdfs:subClassOf ex:Publication ;
+    rdfs:label "Edition" ;
+    rdfs:comment "The proceedings of a specific edition of an Event (Conference or Workshop)." .
+
+ex:Journal a rdfs:Class ;
+    rdfs:label "Journal" ;
+    rdfs:comment "An academic journal that publishes papers in volumes." .
+
+ex:Event a rdfs:Class ;
+    rdfs:label "Event" ;
+    rdfs:comment "A superclass for conferences and workshops." .
+
+ex:Conference a rdfs:Class ;
+    rdfs:subClassOf ex:Event ;
+    rdfs:label "Conference" ;
+    rdfs:comment "A well-established academic conference." .
+
+ex:Workshop a rdfs:Class ;
+    rdfs:subClassOf ex:Event ;
+    rdfs:label "Workshop" ;
+    rdfs:comment "An academic workshop, often for new trends." .
+
+ex:City a rdfs:Class ;
+    rdfs:label "City" ;
+    rdfs:comment "The venue city for an event edition." .
+
+ex:Year a rdfs:Class ;
+    rdfs:label "Year" ;
+    rdfs:comment "The year a publication or event occurs." .
+
+# --- Property Definitions ---
+# These define the relationships between classes (Object Properties)
+# and the attributes of classes (Datatype Properties).
+
+# -- Relationships between Classes (Object Properties) --
+
+ex:isAuthor a rdf:Property ;
+    rdfs:label "is author" ;
+    rdfs:domain ex:Person;
+    rdfs:range ex:Paper;
+    rdfs:comment "Connects a paper to its authors." .
+
+ex:isCorrespondingAuthor a rdf:Property ;
+    rdfs:subPropertyOf ex:isAuthor ;
+    rdfs:label "is corresponding author" ;
+    rdfs:domain ex:Person;
+    rdfs:range ex:Paper;
+    rdfs:comment "Connects a paper to its single corresponding author." .
+
+ex:isReviewer a rdf:Property ;
+    rdfs:label "is reviewer" ;
+    rdfs:domain ex:Person;
+    rdfs:range ex:Paper;
+    rdfs:comment "Connects a paper to a person who reviews it. Note: RDFS cannot enforce the rule that an author cannot review their own paper. " .
+
+ex:publishedIn a rdf:Property ;
+    rdfs:label "published in" ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Publication ;
+    rdfs:comment "Indicates that a paper is published in a specific volume or edition." .
+
+ex:belongsTo a rdf:Property ;
+    rdfs:label "belongs to" ;
+    rdfs:comment "A property to link a publication part (Volume, Edition) to its whole (Journal, Event)." .
+
+ex:volumeBelongsToJournal a rdf:Property ;
+    rdfs:subPropertyOf ex:belongsTo ;
+    rdfs:domain ex:Volume ;
+    rdfs:range ex:Journal .
+
+ex:editionBelongsToEvent a rdf:Property ;
+    rdfs:subPropertyOf ex:belongsTo ;
+    rdfs:domain ex:Edition ;
+    rdfs:range ex:Event .
+
+ex:cites a rdf:Property ;
+    rdfs:label "cites" ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Paper ;
+    rdfs:comment "A paper citing another paper." .
+
+ex:isAbout a rdf:Property ;
+    rdfs:label "is about" ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Topic ;
+    rdfs:comment "Connects a paper to its topics/keywords." .
+
+ex:hostedIn a rdf:Property ;
+    rdfs:label "hosted in" ;
+    rdfs:domain ex:Edition ;
+    rdfs:range ex:City ;
+    rdfs:comment "Specifies the city where an event edition is held." .
+
+ex:publishedInYear a rdf:Property ;
+    rdfs:label "published in year" ;
+    rdfs:domain ex:Publication ;
+    rdfs:range ex:Year ;
+    rdfs:comment "The year a volume or edition was published." .
+
+# -- Attributes of Classes (Datatype Properties) --
+
+ex:hasAbstract a rdf:Property ;
+    rdfs:label "has abstract" ;
+    rdfs:domain ex:Paper ;
+    rdfs:range xsd:string .
+
+ex:hasName a rdf:Property ;
+    rdfs:label "has name" ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A generic name property for entities like Person, Journal, City, Edition." .
+
+ex:hasId a rdf:Property ;
+    rdfs:label "has id" ;
+    rdfs:domain ex:Volume ;
+    rdfs:range xsd:string .
+
+ex:hasField a rdf:Property ;
+    rdfs:label "has field" ;
+    rdfs:domain ex:Topic ;
+    rdfs:range xsd:string .
+
+ex:hasEventType a rdf:Property ;
+    rdfs:label "has event type" ;
+    rdfs:domain ex:Event ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Specifies the type of event (e.g., 'Conference' or 'Workshop')." .
+
+ex:yearValue a rdf:Property ;
+    rdfs:label "year value" ;
+    rdfs:domain ex:Year ;
+    rdfs:range xsd:gYear ;
+    rdfs:comment "The actual year value, e.g., '2023'." .
+
