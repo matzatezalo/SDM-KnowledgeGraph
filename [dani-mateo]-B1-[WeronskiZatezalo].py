@@ -8,20 +8,16 @@ def create_knowledge_graph():
     Creates and populates a knowledge graph based on the publications RDFS schema.
     """
     # --- 1. Setup: Namespaces and Graph ---
-    # Define our custom namespace
     EX = Namespace("http://example.org/ontology/")
 
-    # Create a new graph
     g = Graph()
 
-    # Bind prefixes to the graph for cleaner serialization
     g.bind("rdf", RDF)
     g.bind("rdfs", RDFS)
     g.bind("xsd", XSD)
     g.bind("ex", EX)
 
     # --- 2. TBox Definition (The Schema) ---
-    # This section programmatically defines the classes and properties.
 
     print("Step 1: Defining TBox (Classes and Properties)...")
 
@@ -54,10 +50,7 @@ def create_knowledge_graph():
     g.add((EX.Workshop, RDFS.subClassOf, EX.Event))
 
     # --- Property Definitions ---
-    # (domain, range, label, comment)
-    # Use None if a property doesn't apply (e.g., for generic properties)
     properties = {
-        # Object Properties
         "isAuthor": (
             EX.Person,
             EX.Paper,
@@ -162,15 +155,13 @@ def create_knowledge_graph():
     print("TBox definition complete.")
 
     # --- 4. Serialize the Graph ---
-    # Save the graph to a file in Turtle format
     output_file = "knowledge_graph.ttl"
     g.serialize(destination=output_file, format="turtle")
 
     print(f"\nKnowledge graph saved to {output_file}")
 
-    # Optional: Print the graph to the console
-    print("\n--- Graph Content (Turtle) ---")
-    print(g.serialize(format="turtle"))
+    # print("\n--- Graph Content (Turtle) ---")
+    # print(g.serialize(format="turtle"))
 
     return g
 

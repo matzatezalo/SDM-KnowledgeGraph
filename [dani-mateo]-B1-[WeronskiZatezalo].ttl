@@ -1,0 +1,207 @@
+@prefix ex: <http://example.org/ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:City a rdfs:Class ;
+    rdfs:label "City" ;
+    rdfs:comment "The venue city for an event edition." .
+
+ex:Conference a rdfs:Class ;
+    rdfs:label "Conference" ;
+    rdfs:comment "A well-established academic conference." ;
+    rdfs:subClassOf ex:Event .
+
+ex:Edition a rdfs:Class ;
+    rdfs:label "Edition" ;
+    rdfs:comment "The proceedings of a specific edition of an Event." ;
+    rdfs:subClassOf ex:Publication .
+
+ex:Event a rdfs:Class ;
+    rdfs:label "Event" ;
+    rdfs:comment "A superclass for conferences and workshops." .
+
+ex:Journal a rdfs:Class ;
+    rdfs:label "Journal" ;
+    rdfs:comment "An academic journal that publishes papers in volumes." .
+
+ex:Paper a rdfs:Class ;
+    rdfs:label "Paper" ;
+    rdfs:comment "A research paper written by one or more authors." .
+
+ex:Person a rdfs:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "Represents an individual, who can be an author or a reviewer." .
+
+ex:Publication a rdfs:Class ;
+    rdfs:label "Publication" ;
+    rdfs:comment "A superclass for any medium where papers are published." .
+
+ex:Topic a rdfs:Class ;
+    rdfs:label "Topic" ;
+    rdfs:comment "A keyword or a field of study related to a paper." .
+
+ex:Volume a rdfs:Class ;
+    rdfs:label "Volume" ;
+    rdfs:comment "A volume of a Journal." ;
+    rdfs:subClassOf ex:Publication .
+
+ex:Workshop a rdfs:Class ;
+    rdfs:label "Workshop" ;
+    rdfs:comment "An academic workshop, often for new trends." ;
+    rdfs:subClassOf ex:Event .
+
+ex:Year a rdfs:Class ;
+    rdfs:label "Year" ;
+    rdfs:comment "The year a publication or event occurs." .
+
+ex:cites a rdf:Property ;
+    rdfs:label "cites" ;
+    rdfs:comment "A paper citing another paper." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Paper .
+
+ex:editionBelongsToEvent a rdf:Property ;
+    rdfs:label "edition belongs to event" ;
+    rdfs:comment "Links an edition to its event." ;
+    rdfs:domain ex:Edition ;
+    rdfs:range ex:Event ;
+    rdfs:subPropertyOf ex:belongsTo .
+
+ex:hasAbstract a rdf:Property ;
+    rdfs:label "has abstract" ;
+    rdfs:comment "The summary of the paper." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range xsd:string .
+
+ex:hasEventType a rdf:Property ;
+    rdfs:label "has event type" ;
+    rdfs:comment "Type of event (e.g., 'Conference')." ;
+    rdfs:domain ex:Event ;
+    rdfs:range xsd:string .
+
+ex:hasField a rdf:Property ;
+    rdfs:label "has field" ;
+    rdfs:comment "The name of the topic or field." ;
+    rdfs:domain ex:Topic ;
+    rdfs:range xsd:string .
+
+ex:hasId a rdf:Property ;
+    rdfs:label "has id" ;
+    rdfs:comment "The identifier of a volume." ;
+    rdfs:domain ex:Volume ;
+    rdfs:range xsd:string .
+
+ex:hasName a rdf:Property ;
+    rdfs:label "has name" ;
+    rdfs:comment "A generic name property." ;
+    rdfs:range xsd:string .
+
+ex:hostedIn a rdf:Property ;
+    rdfs:label "hosted in" ;
+    rdfs:comment "Specifies the city where an event edition is held." ;
+    rdfs:domain ex:Edition ;
+    rdfs:range ex:City .
+
+ex:isAbout a rdf:Property ;
+    rdfs:label "is about" ;
+    rdfs:comment "Connects a paper to its topics/keywords." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Topic .
+
+ex:isCorrespondingAuthor a rdf:Property ;
+    rdfs:label "is corresponding author" ;
+    rdfs:comment "Connects a paper to its single corresponding author." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Person ;
+    rdfs:subPropertyOf ex:isAuthor .
+
+ex:isReviewer a rdf:Property ;
+    rdfs:label "is reviewer" ;
+    rdfs:comment "Connects a paper to a person who reviews it." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Person .
+
+<http://example.org/ontology/paper/AdvancedGraphs> a ex:Paper ;
+    ex:cites <http://example.org/ontology/paper/IntroToKG> ;
+    ex:hasName "Advanced Graph Processing" ;
+    ex:isAuthor <http://example.org/ontology/person/JohnSmith> ;
+    ex:isReviewer <http://example.org/ontology/person/JaneDoe> ;
+    ex:publishedIn <http://example.org/ontology/volume/VLDB_v42> .
+
+ex:publishedIn a rdf:Property ;
+    rdfs:label "published in" ;
+    rdfs:comment "Indicates that a paper is published in a specific volume or edition." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Publication .
+
+ex:publishedInYear a rdf:Property ;
+    rdfs:label "published in year" ;
+    rdfs:comment "The year a volume or edition was published." ;
+    rdfs:domain ex:Publication ;
+    rdfs:range ex:Year .
+
+ex:volumeBelongsToJournal a rdf:Property ;
+    rdfs:label "volume belongs to journal" ;
+    rdfs:comment "Links a volume to its journal." ;
+    rdfs:domain ex:Volume ;
+    rdfs:range ex:Journal ;
+    rdfs:subPropertyOf ex:belongsTo .
+
+ex:yearValue a rdf:Property ;
+    rdfs:label "year value" ;
+    rdfs:comment "The actual year value." ;
+    rdfs:domain ex:Year ;
+    rdfs:range xsd:gYear .
+
+<http://example.org/ontology/city/Seattle> a ex:City ;
+    ex:hasName "Seattle" .
+
+<http://example.org/ontology/conference/SIGMOD> a ex:Conference ;
+    ex:hasEventType "Conference" ;
+    ex:hasName "ACM SIGMOD Conference" .
+
+<http://example.org/ontology/edition/SIGMOD2023> a ex:Edition ;
+    ex:editionBelongsToEvent <http://example.org/ontology/conference/SIGMOD> ;
+    ex:hostedIn <http://example.org/ontology/city/Seattle> ;
+    ex:publishedInYear <http://example.org/ontology/year/2023> .
+
+ex:isAuthor a rdf:Property ;
+    rdfs:label "is author" ;
+    rdfs:comment "Connects a paper to its authors." ;
+    rdfs:domain ex:Paper ;
+    rdfs:range ex:Person .
+
+<http://example.org/ontology/journal/VLDB> a ex:Journal ;
+    ex:hasName "The VLDB Journal" .
+
+<http://example.org/ontology/paper/IntroToKG> a ex:Paper ;
+    ex:hasAbstract "This paper provides a comprehensive introduction to the field of knowledge graphs." ;
+    ex:hasName "An Introduction to Knowledge Graphs" ;
+    ex:isAbout <http://example.org/ontology/topic/KnowledgeGraph> ;
+    ex:isAuthor <http://example.org/ontology/person/JaneDoe>,
+        <http://example.org/ontology/person/JohnSmith> ;
+    ex:isCorrespondingAuthor <http://example.org/ontology/person/JaneDoe> ;
+    ex:publishedIn <http://example.org/ontology/edition/SIGMOD2023> .
+
+<http://example.org/ontology/topic/KnowledgeGraph> a ex:Topic ;
+    ex:hasField "Knowledge Graph" .
+
+<http://example.org/ontology/volume/VLDB_v42> a ex:Volume ;
+    ex:hasId "42" ;
+    ex:publishedInYear <http://example.org/ontology/year/2023> ;
+    ex:volumeBelongsToJournal <http://example.org/ontology/journal/VLDB> .
+
+ex:belongsTo a rdf:Property ;
+    rdfs:label "belongs to" ;
+    rdfs:comment "A property to link a publication part to its whole." .
+
+<http://example.org/ontology/person/JohnSmith> a ex:Person ;
+    ex:hasName "John Smith" .
+
+<http://example.org/ontology/year/2023> a ex:Year ;
+    ex:yearValue "2023"^^xsd:gYear .
+
+<http://example.org/ontology/person/JaneDoe> a ex:Person ;
+    ex:hasName "Jane Doe" .
+
