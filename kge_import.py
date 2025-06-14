@@ -1,7 +1,6 @@
 import torch
 import pykeen
 import pandas as pd
-from pykeen import predict
 from pykeen.pipeline import pipeline
 from pykeen.triples import TriplesFactory
 
@@ -59,29 +58,8 @@ def import_kge():
 
     return train, test
 
-# Result
-# result = pipeline(
-#     training=train,
-#     testing=test,
-#     model="TransE",
-#     model_kwargs=dict(
-#         embedding_dim=128,
-#     ),
-#     training_kwargs=dict(
-#         num_epochs=20
-#     ),
-#     optimizer_kwargs=dict(
-#         lr=0.01,
-#     ),
-#     negative_sampler_kwargs=dict(
-#         num_negs_per_pos=1,
-#     ),
-#     random_seed=42
-# )
+train, test = import_kge()
 
-if __name__ == "__main__":
-
-    train, test = import_kge()
 
 
 
