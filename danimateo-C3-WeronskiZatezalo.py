@@ -3,10 +3,10 @@ import pandas as pd
 from pykeen.pipeline import pipeline
 from pykeen.triples import TriplesFactory
 
-def import_kge(path: str="data/kge_data/kge_triples_for_pykeen.tsv") -> TriplesFactory:
-    return TriplesFactory.from_path(path, create_inverse_triples=False)
+# def import_kge(path: str="data/kge_data/kge_triples_for_pykeen.tsv") -> TriplesFactory:
+#     return TriplesFactory.from_path(path, create_inverse_triples=False)
 
-def run_experiment(tf, model_name, emb_dim, num_negs, num_epochs=30, lr=0.01, seed=42):
+def run_experiment(tf, model_name, emb_dim, num_negs, num_epochs=20, lr=0.01, seed=42):
     result = pipeline(
         training=tf,
         testing=tf,
@@ -18,20 +18,22 @@ def run_experiment(tf, model_name, emb_dim, num_negs, num_epochs=30, lr=0.01, se
         random_seed=seed,
     )
 
-    metrics = result.metric.results.to_flat_dict()
+    # Get evaluation metrics
+    metrics = result.metric_results.to_flat_dict()
 
+    # Return training parameters and hyperparameters
     return {
         "model": model_name,
         "emb_dim": emb_dim,
         "neg_per_pos": num_negs,
-        "mrr": metrics["both.realistic.mean_reciprocal_rank"],
+        "mrr": metrics["both.realistic.inverse_harmonic_mean_rank"],
+        "mdr": metrics["both.realistic.median_rank"],
         "h@1": metrics["both.realistic.hits_at_1"],
-        "h@3": metrics["both.realistic.hits_at_3"],
         "h@10": metrics["both.realistic.hits_at_10"],
     }
 
 if __name__ == "__main__":
-    tf = import_kge()
+    tf = TriplesFactory.from_path("kgesmall.tsv")
 
     experiments = []
     # Model names, embedding dimensions and number of negative samples per positive
@@ -41,7 +43,7 @@ if __name__ == "__main__":
         [1, 5],                               
     ):
         print(f"\n→ training {model_name} | dim={emb_dim} | negs={neg}")
-        stats = run_experiment(tf, model_name, emb_dim, neg, num_epochs=30)
+        stats = run_experiment(tf, model_name, emb_dim, neg, num_epochs=20)
         print(f"   → MRR={stats['mrr']:.4f},  H@10={stats['h@10']:.4f}")
         experiments.append(stats)
 

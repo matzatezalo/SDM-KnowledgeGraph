@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 
 from pykeen.pipeline import pipeline
-from kge_import import train, test
+from danimateo_C1_WeronskiZatezalo import train, test
 
 basic_path = "models/basic_result.pkl"
 
