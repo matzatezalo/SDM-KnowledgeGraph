@@ -6,7 +6,7 @@ from pykeen.triples import TriplesFactory
 # def import_kge(path: str="data/kge_data/kge_triples_for_pykeen.tsv") -> TriplesFactory:
 #     return TriplesFactory.from_path(path, create_inverse_triples=False)
 
-def run_experiment(tf, model_name, emb_dim, num_negs, num_epochs=20, lr=0.01, seed=42):
+def run_experiment(tf, model_name, emb_dim, num_negs, num_epochs=20, lr=0.05, seed=42):
     result = pipeline(
         training=tf,
         testing=tf,
