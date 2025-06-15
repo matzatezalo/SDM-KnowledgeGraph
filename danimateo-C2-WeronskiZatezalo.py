@@ -1,6 +1,7 @@
 import torch
 import os
 import pickle
+import numpy as np
 
 from pykeen.pipeline import pipeline
 from kge_import import train, test
@@ -65,9 +66,44 @@ def most_likely_tail(paper_uri: str, relation_label: str, result):
     emb_tensor = model.entity_representations[0](
         torch.tensor([top_idx], dtype=torch.long)
     )                    # shape = (1, embedding_dim)
-    emb = emb_tensor.detach()
+    emb = emb_tensor.detach().cpu().numpy()[0]
 
     return tail_label, top_score, emb
+
+def find_closest_author(emb, result):
+    """
+    Given an embedding vector 'emb' (shape=(d,)), find the author
+    whose embedding is closest in Euclidean distance.
+    """
+    tf    = result.training
+    model = result.model
+
+    # Pick out exactly the entity‐URIs that are authors
+    author_uris = [
+        uri
+        for uri in tf.entity_to_id
+        if tf.entity_to_id[uri] is not None and "/person/" in uri
+    ]
+    author_ids = [tf.entity_to_id[uri] for uri in author_uris]
+
+    # Batch‐fetch all those author embeddings
+    # model.entity_representations[0] is the function mapping a tensor of IDs -> embeddings
+    emb_tensor = model.entity_representations[0](
+        torch.tensor(author_ids, dtype=torch.long)
+    )  
+    author_embs = emb_tensor.detach().cpu().numpy()
+
+    # Compute Euclidean distances
+    diffs = author_embs - emb[np.newaxis, :]  
+    dists = np.linalg.norm(diffs, axis=1)     
+
+    # Choose the one with the minimum distance
+    best_idx = int(np.argmin(dists))
+    best_uri = author_uris[best_idx]
+    best_dist = float(dists[best_idx])
+
+    return best_uri, best_dist
+
 
 if __name__ == "__main__":
     basic_result = get_basic_result(train, test)
@@ -78,7 +114,7 @@ if __name__ == "__main__":
     paper_uri = all_entities[12]
 
     # Predict “cites” most likely embedding vector
-    cited_label, score, embedding = most_likely_tail(
+    cited_label, score, paper_emb = most_likely_tail(
         paper_uri,
         relation_label="<http://example.org/ontology/cites>",
         result=basic_result,
@@ -86,5 +122,11 @@ if __name__ == "__main__":
     print("Top paper predicted to be _cited_ by", paper_uri)
     print("Predicted cited‐by:", cited_label)
     print("Score:", score)
-    print("Embedding:", embedding)
+    print("Embedding:", paper_emb)
+
+    # Identify the author whose embedding is the closest
+    author_uri, author_dist = find_closest_author(paper_emb, basic_result)
+    print("The author whose embedding is closest to that paper is:")
+    print("   ", author_uri)
+    print("at Euclidean distance:", author_dist)
 
