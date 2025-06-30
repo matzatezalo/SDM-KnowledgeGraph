@@ -1,15 +1,8 @@
 # SDM Project 2: Knowledge Graph & Embeddings Project
 
-**Authors**  
-Mateja Zatezalo & Daniel Weroński Falcó
-Master’s Degree in Data Science (MDS) – FIB UPC, June 2025
----
-
-## 📚 Overview
-
 This repository contains all code, data transforms, SPARQL queries, and embedding-training scripts for building and exploiting a **Knowledge Graph** of academic publications.  
 
-Project report SDM_Project_Report.pdf contains all information about our work.
+Project report **SDM_Project_Report.pdf** contains all information about our work.
 
 1. **Ontology (TBox)**: schema for papers, authors, venues, topics, etc.  
 2. **Data Lifting (ABox)**: Python scripts to convert JSON into RDF triples.  
